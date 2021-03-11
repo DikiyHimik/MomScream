@@ -2,21 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class InfoPresenter : MonoBehaviour
 {
-    private TMP_Text _text;
+    [SerializeField] private Text _text;
+
+    private Slider _slider;
     private int _commonCountItems;
     private int _clearedItems;
 
     private void Start()
     {
-        _text = GetComponent<TMP_Text>();
+        _slider = GetComponent<Slider>();
     }
 
     public void ChangeScene(int count)
     {
         _commonCountItems = count;
+
+        _slider.maxValue = count;
+        _slider.value = 0;
+
         _clearedItems = 0;
 
         WriteInfo();
@@ -24,6 +31,8 @@ public class InfoPresenter : MonoBehaviour
 
     public void ChangeCountClearedItems()
     {
+        _slider.value++;
+
         _clearedItems++;
 
         WriteInfo();
@@ -31,6 +40,6 @@ public class InfoPresenter : MonoBehaviour
 
     private void WriteInfo()
     {
-        _text.text = $"Убрано предметов {_clearedItems}/{_commonCountItems}";
+        _text.text = $"{_clearedItems}/{_commonCountItems}";
     }
 }
