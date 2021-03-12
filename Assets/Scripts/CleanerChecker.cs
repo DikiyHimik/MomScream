@@ -47,7 +47,7 @@ public class CleanerChecker : MonoBehaviour
     private void AddClearedItems()
     {
         _countClearedItems++;
-        _infoPresenter.ChangeCountClearedItems();
+        _infoPresenter.AddValue();
 
         if (_countClearedItems == _countItemsInZone)
         {

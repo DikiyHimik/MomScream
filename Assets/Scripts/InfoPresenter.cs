@@ -6,29 +6,17 @@ using UnityEngine.UI;
 
 public class InfoPresenter : MonoBehaviour
 {
-    [SerializeField] private Text _text;
-    [SerializeField] private GameObject _fill;
-
     private Slider _slider;
 
     private void Start()
     {
         _slider = GetComponent<Slider>();
 
-        _fill.SetActive(false);
-
-        _slider.maxValue = 34;
+        _slider.value = 0;
     }
 
-    public void ChangeCountClearedItems()
+    public void AddValue()
     {
-        _fill.SetActive(true);
-
         _slider.value++;
-    }
-
-    public void Hide()
-    {
-        gameObject.SetActive(false);
     }
 }

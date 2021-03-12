@@ -6,7 +6,7 @@ public class CameraTranslater : MonoBehaviour
 {
     [SerializeField] private List<GameObject> _positions;
     [SerializeField] private List<CleanerChecker> _checkers;
-    [SerializeField] private InfoPresenter _infoPresenter;
+    [SerializeField] private List<RectTransform> _presenters;
 
     [SerializeField] private AudioSource _audioSourceEndGame;
     [SerializeField] private AudioSource _audioSourceChangeScene;
@@ -21,6 +21,8 @@ public class CameraTranslater : MonoBehaviour
         _numberCurrentPosition = 0;
 
         SetCameraInPosition();
+
+        IncreaseScale(_numberCurrentPosition);
     }
 
     private void OnEnable()
@@ -51,16 +53,19 @@ public class CameraTranslater : MonoBehaviour
 
     private void WaitChangePosition()
     {
+        DecreaseScale(_numberCurrentPosition);
+
         if (_numberCurrentPosition == _positions.Count - 1)
         {
             _backGrounMusic.Stop();
-            _infoPresenter.Hide();
             _audioSourceEndGame.Play();
             _endPanel.SetActive(true);
         }
         else
         {
             _numberCurrentPosition++;
+
+            IncreaseScale(_numberCurrentPosition);
 
             _audioSourceChangeScene.Play();
         }
@@ -75,5 +80,19 @@ public class CameraTranslater : MonoBehaviour
 
         gameObject.transform.position = newPosition;
         gameObject.transform.rotation = newQuaternion;
+    }
+
+    private void IncreaseScale(int index)
+    {
+        Vector3 newScale = new Vector3(_presenters[index].localScale.x, _presenters[index].localScale.y, _presenters[index].localScale.z) * 1.3f;
+
+        _presenters[index].localScale = newScale;
+    }
+
+    private void DecreaseScale(int index)
+    {
+        Vector3 newScale = new Vector3(_presenters[index].localScale.x, _presenters[index].localScale.y, _presenters[index].localScale.z) / 1.3f;
+
+        _presenters[index].localScale = newScale;
     }
 }
