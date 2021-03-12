@@ -5,45 +5,61 @@ using DG.Tweening;
 
 public class ItemMover : MonoBehaviour
 {
-    float _timeRotation = 1;
-    float _timeTranslation = 1;
-    private Transform _endPosition;
+    [SerializeField] private List<Transform> _points;
+    [SerializeField] private GameObject _emoji;
+
+    private Camera _mainCamera;
+    private float _timeRotation = 1;
+    private float _timeTranslation = 1;
 
     private Tween _tween;
 
     private void Start()
     {
-        Transform child = transform.GetChild(0);
-
-        _endPosition = child.transform;
+        _mainCamera = Camera.main;
     }
 
     public void Move()
     {
-        Rotate();
-        Translate();
+        Translate(_points);
+
+        Rotate(_points[_points.Count - 1]);
+
+        Invoke("PlayParticleSystem", _timeTranslation * _points.Count);
     }
 
-    private void Rotate()
+    private void Rotate(Transform endPoint)
     {
-        Quaternion targetQuaternion = _endPosition.rotation;
+        Quaternion targetQuaternion = endPoint.rotation;
 
         _tween = transform.DORotate(targetQuaternion.eulerAngles, _timeRotation);
     }
 
-    private void Translate()
+    private void Translate(List<Transform> points)
     {
-        Vector3 targetPosition = _endPosition.position;
+        Vector3[] traectory = new Vector3[points.Count];
 
-        _tween = transform.DOMove(targetPosition, _timeTranslation);
+        for (int i = 0; i < traectory.Length; i++)
+        {
+            traectory[i] = points[i].position;
+        }
+
+        _tween = transform.DOPath(traectory, _timeTranslation * _points.Count, PathType.Linear);
     }
 
-    private void SetPosition()
+    private void PlayParticleSystem()
     {
-        Vector3 newPosition = _endPosition.position;
-        Quaternion newQuaternion = _endPosition.rotation;
+        GameObject _emojiSysytem = Instantiate(_emoji, gameObject.transform.position, Quaternion.identity);
+        _emojiSysytem.transform.LookAt(_mainCamera.transform.position);
+        _emojiSysytem.transform.Translate(Vector3.forward);
+        _emojiSysytem.GetComponent<ParticleSystem>().Play();
+    }
 
-        gameObject.transform.position = newPosition;
-        gameObject.transform.rotation = newQuaternion;
+    private void SetParticleSystem(ParticleSystem particles)
+    {
+        Vector3 position = transform.position;
+
+        particles.transform.position = position;
+        particles.transform.LookAt(_mainCamera.transform.position);
     }
 }

@@ -6,6 +6,7 @@ public class CameraTranslater : MonoBehaviour
 {
     [SerializeField] private List<GameObject> _positions;
     [SerializeField] private List<CleanerChecker> _checkers;
+    [SerializeField] private InfoPresenter _infoPresenter;
 
     [SerializeField] private AudioSource _audioSourceEndGame;
     [SerializeField] private AudioSource _audioSourceChangeScene;
@@ -20,8 +21,6 @@ public class CameraTranslater : MonoBehaviour
         _numberCurrentPosition = 0;
 
         SetCameraInPosition();
-
-        _checkers[_numberCurrentPosition].ChangePosition();
     }
 
     private void OnEnable()
@@ -42,9 +41,20 @@ public class CameraTranslater : MonoBehaviour
 
     public void ChangePosition()
     {
+        Invoke("WaitChangePosition", 3);
+    }
+
+    public void PlayMusic()
+    {
+        _backGrounMusic.Play();
+    }
+
+    private void WaitChangePosition()
+    {
         if (_numberCurrentPosition == _positions.Count - 1)
         {
             _backGrounMusic.Stop();
+            _infoPresenter.Hide();
             _audioSourceEndGame.Play();
             _endPanel.SetActive(true);
         }
@@ -52,16 +62,10 @@ public class CameraTranslater : MonoBehaviour
         {
             _numberCurrentPosition++;
 
-            _checkers[_numberCurrentPosition].ChangePosition();
             _audioSourceChangeScene.Play();
         }
 
         SetCameraInPosition();
-    }
-
-    public void PlayMusic()
-    {
-        _backGrounMusic.Play();
     }
 
     private void SetCameraInPosition()

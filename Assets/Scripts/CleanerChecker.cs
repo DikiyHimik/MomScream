@@ -37,11 +37,6 @@ public class CleanerChecker : MonoBehaviour
         }
     }
 
-    public void ChangePosition()
-    {
-        _infoPresenter.ChangeScene(_countItemsInZone); 
-    }
-
     private void CheckClearedZone()
     {
         _audioSourceItemClicked.Play();
