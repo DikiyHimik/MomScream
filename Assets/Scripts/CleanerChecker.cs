@@ -5,9 +5,10 @@ using UnityEngine.Events;
 
 public class CleanerChecker : MonoBehaviour
 {
-    [SerializeField] private List<TouchDetector> _detectors;
     [SerializeField] private InfoPresenter _infoPresenter;
     [SerializeField] private AudioSource _audioSourceItemClicked;
+
+    private TouchDetector[] _detectors;
 
     private int _countItemsInZone;
     private int _countClearedItems;
@@ -18,12 +19,14 @@ public class CleanerChecker : MonoBehaviour
     {
         _countClearedItems = 0;
 
-        _countItemsInZone = _detectors.Count;
+        _countItemsInZone = _detectors.Length;
+
+        FillArrayDetectors();
     }
 
     private void OnDisable()
     {
-        for (int i = 0; i < _detectors.Count; i++)
+        for (int i = 0; i < _detectors.Length; i++)
         {
             _detectors[i].ItemWasRemoved -= CheckClearedZone;
         }
@@ -31,9 +34,19 @@ public class CleanerChecker : MonoBehaviour
 
     private void OnEnable()
     {
-        for (int i = 0; i < _detectors.Count; i++)
+        for (int i = 0; i < _detectors.Length; i++)
         {
             _detectors[i].ItemWasRemoved += CheckClearedZone;
+        }
+    }
+
+    private void FillArrayDetectors()
+    {
+        _detectors = new TouchDetector[transform.childCount];
+
+        for (int i = 0; i < _detectors.Length; i++)
+        {
+            _detectors[i] = transform.GetComponentInChildren<TouchDetector>();
         }
     }
 
@@ -47,6 +60,7 @@ public class CleanerChecker : MonoBehaviour
     private void AddClearedItems()
     {
         _countClearedItems++;
+
         _infoPresenter.AddValue();
 
         if (_countClearedItems == _countItemsInZone)
@@ -54,4 +68,6 @@ public class CleanerChecker : MonoBehaviour
             ZoneCleared?.Invoke();
         }
     }
+
+
 }

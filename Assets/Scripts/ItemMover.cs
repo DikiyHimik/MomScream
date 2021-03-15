@@ -32,6 +32,20 @@ public class ItemMover : MonoBehaviour
         Invoke("PlayParticleSystem", _timeTranslation * _positions.Length);
     }
 
+    private void FillArrayPositions()
+    {
+        _positions = new Vector3[transform.childCount];
+
+        for (int i = 0; i < _positions.Length; i++)
+        {
+            Transform newPosition = transform.GetChild(i);
+
+            _positions[i] = newPosition.position;
+
+            _endRotation = newPosition.rotation.eulerAngles;
+        }
+    }
+
     private void Rotate()
     {
         _tween = transform.DORotate(_endRotation, _timeRotation);
@@ -48,19 +62,5 @@ public class ItemMover : MonoBehaviour
         _emojiSysytem.transform.LookAt(_mainCamera.transform.position);
         _emojiSysytem.transform.Translate(Vector3.forward);
         _emojiSysytem.GetComponent<ParticleSystem>().Play();
-    }
-
-    private void FillArrayPositions()
-    {
-        _positions = new Vector3[transform.childCount];
-
-        for (int i = 0; i < _positions.Length; i++)
-        {
-            Transform newPosition = transform.GetChild(i);
-
-            _positions[i] = newPosition.position;
-
-            _endRotation = newPosition.rotation.eulerAngles;
-        }
     }
 }
