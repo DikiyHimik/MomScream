@@ -1,24 +1,28 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class CameraTranslater : MonoBehaviour
 {
-    [SerializeField] private List<GameObject> _positions;
+    [SerializeField] private GameObject _positionsContainer;
     [SerializeField] private List<CleanerChecker> _checkers;
     [SerializeField] private List<RectTransform> _presenters;
-
-    [SerializeField] private AudioSource _audioSourceEndGame;
-    [SerializeField] private AudioSource _audioSourceChangeScene;
-    [SerializeField] private AudioSource _backGrounMusic;
     [SerializeField] private GameObject _endPanel;
 
+    public event UnityAction FrameCnahge;
+    public event UnityAction EndingGame;
+
+    private Transform[] _positions;
     private int _numberCurrentPosition;
 
     private void Start()
     {
         _endPanel.SetActive(false);
+
         _numberCurrentPosition = 0;
+
+        FillPositionsArray();
 
         SetCameraInPosition();
 
@@ -46,19 +50,14 @@ public class CameraTranslater : MonoBehaviour
         Invoke("WaitChangePosition", 3);
     }
 
-    public void PlayMusic()
-    {
-        _backGrounMusic.Play();
-    }
-
     private void WaitChangePosition()
     {
         DecreaseScale(_numberCurrentPosition);
 
-        if (_numberCurrentPosition == _positions.Count - 1)
+        if (_numberCurrentPosition == _positions.Length - 1)
         {
-            _backGrounMusic.Stop();
-            _audioSourceEndGame.Play();
+            EndingGame?.Invoke();
+
             _endPanel.SetActive(true);
         }
         else
@@ -67,10 +66,20 @@ public class CameraTranslater : MonoBehaviour
 
             IncreaseScale(_numberCurrentPosition);
 
-            _audioSourceChangeScene.Play();
+            FrameCnahge?.Invoke();
         }
 
         SetCameraInPosition();
+    }
+
+    private void FillPositionsArray()
+    {
+        _positions = new Transform[_positionsContainer.transform.childCount];
+
+        for (int i = 0; i < _positions.Length; i++)
+        {
+            _positions[i] = _positionsContainer.transform.GetChild(i);
+        }
     }
 
     private void SetCameraInPosition()

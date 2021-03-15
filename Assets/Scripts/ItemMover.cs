@@ -8,6 +8,8 @@ public class ItemMover : MonoBehaviour
     [SerializeField] private List<Transform> _points;
     [SerializeField] private GameObject _emoji;
 
+    private Transform[] _positions;
+
     private Camera _mainCamera;
     private float _timeRotation = 1;
     private float _timeTranslation = 1;
@@ -17,6 +19,8 @@ public class ItemMover : MonoBehaviour
     private void Start()
     {
         _mainCamera = Camera.main;
+
+        FillArrayPositions();
     }
 
     public void Move()
@@ -55,11 +59,13 @@ public class ItemMover : MonoBehaviour
         _emojiSysytem.GetComponent<ParticleSystem>().Play();
     }
 
-    private void SetParticleSystem(ParticleSystem particles)
+    private void FillArrayPositions()
     {
-        Vector3 position = transform.position;
+        _positions = new Transform[transform.childCount];
 
-        particles.transform.position = position;
-        particles.transform.LookAt(_mainCamera.transform.position);
+        for (int i = 0; i < _positions.Length; i++)
+        {
+            _positions[i] = transform.GetChild(i);
+        }
     }
 }
