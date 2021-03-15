@@ -8,7 +8,8 @@ public class ItemMover : MonoBehaviour
     [SerializeField] private List<Transform> _points;
     [SerializeField] private GameObject _emoji;
 
-    private Transform[] _positions;
+    private Vector3[] _positions;
+    private Vector3 _endRotation;
 
     private Camera _mainCamera;
     private float _timeRotation = 1;
@@ -36,7 +37,7 @@ public class ItemMover : MonoBehaviour
     {
         Quaternion targetQuaternion = endPoint.rotation;
 
-        _tween = transform.DORotate(targetQuaternion.eulerAngles, _timeRotation);
+        _tween = transform.DORotate(_endRotation, _timeRotation);
     }
 
     private void Translate(List<Transform> points)
@@ -48,7 +49,7 @@ public class ItemMover : MonoBehaviour
             traectory[i] = points[i].position;
         }
 
-        _tween = transform.DOPath(traectory, _timeTranslation * _points.Count, PathType.Linear);
+        _tween = transform.DOPath(_positions, _timeTranslation * _points.Count, PathType.Linear);
     }
 
     private void PlayParticleSystem()
@@ -61,11 +62,15 @@ public class ItemMover : MonoBehaviour
 
     private void FillArrayPositions()
     {
-        _positions = new Transform[transform.childCount];
+        _positions = new Vector3[transform.childCount];
 
         for (int i = 0; i < _positions.Length; i++)
         {
-            _positions[i] = transform.GetChild(i);
+            Transform newPosition = transform.GetChild(i);
+
+            _positions[i] = newPosition.position;
+
+            _endRotation = newPosition.rotation.eulerAngles;
         }
     }
 }
