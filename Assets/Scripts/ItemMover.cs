@@ -5,7 +5,6 @@ using DG.Tweening;
 
 public class ItemMover : MonoBehaviour
 {
-    [SerializeField] private List<Transform> _points;
     [SerializeField] private GameObject _emoji;
 
     private Vector3[] _positions;
@@ -26,30 +25,21 @@ public class ItemMover : MonoBehaviour
 
     public void Move()
     {
-        Translate(_points);
+        Translate();
 
-        Rotate(_points[_points.Count - 1]);
+        Rotate();
 
-        Invoke("PlayParticleSystem", _timeTranslation * _points.Count);
+        Invoke("PlayParticleSystem", _timeTranslation * _positions.Length);
     }
 
-    private void Rotate(Transform endPoint)
+    private void Rotate()
     {
-        Quaternion targetQuaternion = endPoint.rotation;
-
         _tween = transform.DORotate(_endRotation, _timeRotation);
     }
 
-    private void Translate(List<Transform> points)
+    private void Translate()
     {
-        Vector3[] traectory = new Vector3[points.Count];
-
-        for (int i = 0; i < traectory.Length; i++)
-        {
-            traectory[i] = points[i].position;
-        }
-
-        _tween = transform.DOPath(_positions, _timeTranslation * _points.Count, PathType.Linear);
+        _tween = transform.DOPath(_positions, _timeTranslation * _positions.Length, PathType.Linear);
     }
 
     private void PlayParticleSystem()
